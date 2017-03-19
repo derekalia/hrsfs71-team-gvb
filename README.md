@@ -56,6 +56,7 @@ Open the root directory in three terminal windows.
 ```sh
 mongod
 ```
+
 *2st Terminal Window*
 
 ```
@@ -65,7 +66,7 @@ npm run build
 *3st Terminal Window*
 
 ```sh
-npm start-server
+npm start
 ```
 
 ## Contributing
