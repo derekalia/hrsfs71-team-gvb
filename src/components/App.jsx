@@ -3,9 +3,7 @@ import { HashRouter as Router, Link, Route, Redirect } from 'react-router-dom';
 import Signup from './Signup.jsx';
 import Login from './Login.jsx';
 import Home from './Home.jsx';
-import GameLobby from './GameLobby.jsx';
 import CreateGame from './CreateGame.jsx';
-import JoinGame from './JoinGame.jsx';
 import Game from './Game.jsx';
 
 class App extends React.Component {
