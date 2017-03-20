@@ -58,7 +58,9 @@ class App extends React.Component {
           <Route exact path='/' render={() => {
             return this.state.user.loggedin ? <Redirect to='/home' /> : <Redirect to='/login' />;
           }}/>
-          <Route path='/home' component={Home}/>
+          <Route path='/home' render={() => {
+            return <Home socket={socket} username={this.state.user.username}/>;
+          }}/>
           <Route path='/login' render={() => <Login login={this.login}/>} />
           <Route path='/signup' component={Signup}/>
           <Route path='/creategame' render={() => <CreateGame user={this.state.user}/>} />
@@ -66,7 +68,7 @@ class App extends React.Component {
             return (this.state.user.loggedin) ? <Game username={this.state.user.username} /> : <Redirect to='/login'/>;
           }}/>
           <Route path='/game/vote' render={() => <Vote user={this.state.user.username}/>}/>          
-        <Game socket={socket} username={this.state.user.username}/>
+        {/*<Game socket={socket} username={this.state.user.username}/>*/}
         </div>
         
       </Router>
