@@ -40,15 +40,3 @@ class AssignRole extends React.Component {
 }
 
 export default AssignRole;
-
-/*import ReactTimeout from 'react-timeout';
-
-class Example extends React.Component {
-  render() {
-    return (
-      <button
-        onClick={() => this.props.setTimeout(5000)}>Click me!</button>
-    );
-  }
-}
-export default ReactTimeout(Example);*/
