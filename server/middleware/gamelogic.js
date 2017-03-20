@@ -2,6 +2,7 @@
 
 const express = require('express');
 const socket = require('socket.io');
+const NUM_OF_BAD = 2; // hardcoded for now
 
 module.exports = function (app, express, server) {
 
@@ -55,6 +56,7 @@ module.exports = function (app, express, server) {
       roundVote: null,
       missionVote: null,
       picker: false,
+      isBad: false,
       selected: false,
       avatar: null,
       userID: socket.client.id,
@@ -85,8 +87,9 @@ module.exports = function (app, express, server) {
         cleanPlayers();
         io.emit('voteBoxes', false);
         io.emit('updateQuest', quest);
-        setCoin();
-        updateClientArray();
+        setCoin();  
+        setRoles(NUM_OF_BAD);      
+        updateClientArray();        
         console.log('starting game');
       } else {
         console.log('not enought players yet!');
@@ -164,6 +167,15 @@ module.exports = function (app, express, server) {
         player.inMission = false;
       });
       console.log('all cleaned');
+    };
+
+    let setRoles = (numOfBads) => {
+      // create array of numOfBad random numbers between 1 and 5, inclusive
+      let badIndices = [1, 3]; //hardcoded for now
+      badIndices.forEach((i) => {
+        userArray[i][isBad] = true;
+        console.log('bad user: ', userArray[i]);
+      });
     };
 
     let addToCounter = function () {
