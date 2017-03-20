@@ -7,15 +7,16 @@ const GOOD_IMG = 'http://emojipedia-us.s3.amazonaws.com/cache/7e/1a/7e1a5de60d10
 const BAD_IMG = 'http://emojipedia-us.s3.amazonaws.com/cache/1f/96/1f96347d3df271789cfbd2505cb1a103.png';
 
 class AssignRole extends React.Component {
-  constructor({resultsArray, username}) {
-    super({resultsArray, username});
+  constructor(props) {
+    super(props);
     this.state = {
-      showRole: true,
-      allUsers: resultsArray,
-      thisUser: username,
-      isBad: false,
-      otherBads: []
+      // showRole: true,
+      // allUsers: props.userArray,
+      role: props.roleObj,
+      // isBad: false,
+      // otherBads: []
     };
+
     this.hideRole = this.hideRole.bind(this);
     this.tempImg = this.tempImg.bind(this);
     this.determineRole = this.determineRole.bind(this);
@@ -31,7 +32,7 @@ class AssignRole extends React.Component {
 
   determineRole() {
     console.log('ResultsArray handed to AssignRolecomponent: ', this.allUsers);
-    console.log('Username handed to AssignRolecomponent: ', this.thisUser);
+    // console.log('Username handed to AssignRolecomponent: ', this.state.thisUser);
     // loop through allUsers until finding thisUser
       // if a user isBad and is NOT thisUser, push that user to otherBads results
       // if user isBad and IS thisUser, set isBad to true
@@ -39,10 +40,11 @@ class AssignRole extends React.Component {
   }
 
   render () {
+    console.log('role in assign role', this.state.role);
     return (
       <div>
         <div>
-          {determineRole()}
+          {this.determineRole()}
           <Timer seconds={10}
             color="#000"
             alpha={0.9}

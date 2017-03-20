@@ -61,7 +61,8 @@ module.exports = function (app, express, server) {
       avatar: null,
       userID: socket.client.id,
       inMission: false,
-      key: socket.client.id
+      key: socket.client.id,
+      joinedGame: false
     });
 
     //send each client an id
@@ -80,6 +81,44 @@ module.exports = function (app, express, server) {
       // console.log(userArray);
     });
 
+    let allJoined = () => {  
+      for (let player of userArray) {
+        if (!player.joinedGame) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    socket.on('joinedGame', () => {
+      userArray.forEach((player) => {
+        if (player.userID === socket.id) {
+          player.joinedGame = true;
+        }
+        if (allJoined()) {
+          assignRoles();
+        }
+      });
+      updateClientArray();
+    });
+
+    let assignRoles = () => {
+      setRoles(2);
+      // create array of bads (TODO: use reduce)
+      let bads = [];
+      userArray.forEach((player) => {
+        if (player.isBad) {
+          bads.push(player);
+        }
+      });
+
+      userArray.forEach((player) => {  
+        console.log('role sent to userID: ', player.userID + '' + {isBad: player.isBad, bads: bads}); 
+        io.to(player.userID).emit('role', {isBad: player.isBad, bads: bads});
+      });
+
+      io.emit('readyToStart', userArray);
+    };
 
     //getPlayerAmount
     socket.on('gameStart', () => {
