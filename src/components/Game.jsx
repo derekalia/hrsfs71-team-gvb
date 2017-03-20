@@ -36,8 +36,9 @@ class Game extends React.Component {
     socket.on('topMessage', (message) => { this.setState({ topMessage: message }); });
     socket.on('midMessage', (message) => { this.setState({ midMessage: message }); });
     socket.on('resetroundVoteBtn', () => { this.setState({ roundVoteBtn: null }); });
-    socket.on('showVotes', (bool) => { this.setState({showVotes: bool}); });
-        
+    socket.on('showVotes', (bool) => { this.setState({showVotes: bool}); console.log('show votes', bool); });
+    socket.on('groupVoteBtns', ()=>{ this.setState({groupVotePassBtn: false, groupVoteFailBtn: false}); });
+    
     this.roundVote = this.roundVote.bind(this);
     this.isPicker = this.isPicker.bind(this);
     this.sendConfirmation = this.sendConfirmation.bind(this);
@@ -98,6 +99,7 @@ class Game extends React.Component {
       // render waiting area (aka game lobby)
       return (
         <div className='playerList'>
+          <p>Hi, {this.state.username}!</p>
           <div className='waitMsg'>Waiting for all players to join . . .</div>
           {this.state.resultsArray.map((player, i) => {
             return <Player selected={player.selected} isPicker={this.isPicker} roundVote={this.roundVote} showVote={player.vote} handleCheck={this.handleCheck} key={player.key} userID={player.userID} pickerID={this.state.picker} />;
