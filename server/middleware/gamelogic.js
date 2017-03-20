@@ -72,8 +72,8 @@ module.exports = function (app, express, server) {
         if (player.userID === userObj.playerID) {
           player.name = userObj.username;
         }
-      }      
-    );
+      }
+      );
       updateClientArray();
       // console.log(userArray);
     });
@@ -185,8 +185,7 @@ module.exports = function (app, express, server) {
     };
 
     //sets player vote to pass or fail
-    socket.on('roundVote', (voteObj) => {          
-      
+    socket.on('roundVote', (voteObj) => {
       userArray.forEach((player) => {
         if (player.userID === voteObj.user) {
 
@@ -251,14 +250,16 @@ module.exports = function (app, express, server) {
       if (falseCount > 0) {
         console.log('the mission failed!');
         quest[questCounter].success = false;
+        groupVoteFailed();
+        missionVoteFail();
+
       } else {
         console.log('the mission succeeded!');
         quest[questCounter].success = true;
-        
+        missionVoteSuccess();
       }
       //you should call this something else
       questCounter++;
-      groupVoteFailed();
     };
 
     //counts all round votes and finds majority
@@ -294,36 +295,77 @@ module.exports = function (app, express, server) {
       updateClientArray();
       io.emit('topMessage', 'Vote Success');
       io.emit('midMessage', '');
-      setTimeout(()=>{ 
-        io.emit('groupVoteBtns'); 
-        missionVote(); 
-        io.emit('showVotes', false); 
+      setTimeout(() => {
+        io.emit('groupVoteBtns');
+        missionVote();
+        io.emit('showVotes', false);
+        io.emit('topMessage', 'This group is going on a mission...waiting for results');
       }, 8000);
+
     };
 
-    let groupVoteFailed = () => {
-      //we want to clean the players
-   
-      
+
+    let missionVoteFail = () => {
       io.emit('setPicker', '');
       io.emit('voteBoxes', false);
       selectCounter = 0;
       roundCounter = 0;
       missionCounter = 0;
 
-      
-      io.emit('topMessage', 'Vote Failed');
-      io.emit('midMessage', '');      
+      io.emit('topMessage', 'Mission Failed!');
+      io.emit('midMessage', '');
       updateClientArray();
-      
-      setTimeout(()=>{
+
+      setTimeout(() => {
         cleanPlayers();
         io.emit('groupVoteBtns');
         setCoin();
         io.emit('showVotes', false);
-        updateClientArray();        
+        updateClientArray();
       }, 8000);
-      
+
+    };
+
+    let missionVoteSuccess = () => {
+      io.emit('setPicker', '');
+      io.emit('voteBoxes', false);
+      selectCounter = 0;
+      roundCounter = 0;
+      missionCounter = 0;
+
+      io.emit('topMessage', 'Mission Success!');
+      io.emit('midMessage', '');
+
+      updateClientArray();
+
+      setTimeout(() => {
+        cleanPlayers();
+        io.emit('groupVoteBtns');
+        setCoin();
+        io.emit('showVotes', false);
+        updateClientArray();
+      }, 8000);
+    };
+
+    let groupVoteFailed = () => {
+      io.emit('setPicker', '');
+      io.emit('voteBoxes', false);
+      selectCounter = 0;
+      roundCounter = 0;
+      missionCounter = 0;
+
+      io.emit('topMessage', 'Vote Failed');
+      io.emit('midMessage', '');
+      updateClientArray();
+
+      setTimeout(() => {
+        cleanPlayers();
+        io.emit('groupVoteBtns');
+        setCoin();
+        io.emit('showVotes', false);
+        updateClientArray();
+      }, 8000);
+
     };
 
     let missionVote = () => {
