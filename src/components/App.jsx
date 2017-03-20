@@ -7,6 +7,9 @@ import GameLobby from './GameLobby.jsx';
 import CreateGame from './CreateGame.jsx';
 import JoinGame from './JoinGame.jsx';
 import Game from './Game.jsx';
+import SocketIOClient from 'socket.io-client';
+
+var socket = SocketIOClient('http://localhost:3000');
 
 class App extends React.Component {
   constructor(props) {
@@ -65,7 +68,7 @@ class App extends React.Component {
             return (this.state.user.loggedin) ? <Game username={this.state.user.username} /> : <Redirect to='/login'/>;
           }}/>
           <Route path='/game/vote' render={() => <Vote user={this.state.user.username}/>}/>          
-        <Game username={this.state.user.username}/>
+        <Game socket={socket} username={this.state.user.username}/>
         </div>
         
       </Router>
