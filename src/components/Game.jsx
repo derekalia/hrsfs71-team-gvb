@@ -1,6 +1,7 @@
 import React from 'react';
 import SocketIOClient from 'socket.io-client';
 import Player from './Player.jsx';
+import AssignRole from './AssignRole.jsx';
 
 var socket = SocketIOClient('http://localhost:3000');
 const MIN_PLAYERS = 5;
@@ -98,6 +99,7 @@ class Game extends React.Component {
     } else {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <AssignRole isGood={true} badGuys={[]}/>
 
           <div style={{ flex: 1, alignSelf: 'center' }}>
             <button onClick={() => { console.log('starting game'); socket.emit('gameStart'); }}>start game</button>
