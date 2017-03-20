@@ -43,14 +43,14 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <div>
-          <p>Welcome to our game {this.state.user.username}!</p>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/signup">Signip</Link></li>
-            <li><button onClick={this.logOut}>Logout</button></li>
-          </ul>
+        <div className="App">
+          <div className="header"><header>Welcome to our game {this.state.user.username}!</header></div>
+          <div>
+            <div><Link to="/">Home</Link></div>
+            <div><Link to="/login">Login</Link></div>
+            <div><Link to="/signup">Signup</Link></div>
+            <div><button onClick={this.logOut}>Logout</button></div>
+          </div>
 
           <hr/>
 
