@@ -173,8 +173,7 @@ module.exports = function (app, express, server) {
       // create array of numOfBad random numbers between 1 and 5, inclusive
       let badIndices = [1, 3]; //hardcoded for now
       badIndices.forEach((i) => {
-        userArray[i][isBad] = true;
-        console.log('bad user: ', userArray[i]);
+        userArray[i].isBad = true;
       });
     };
 
