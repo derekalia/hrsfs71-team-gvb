@@ -1,5 +1,6 @@
 import React from 'react';
 import Player from './Player.jsx';
+import AssignRole from './AssignRole.jsx';
 
 
 const MIN_PLAYERS = 5;
@@ -21,7 +22,8 @@ class Game extends React.Component {
       midMessage: ' ',
       groupVotePassBtn: false,
       groupVoteFailBtn: false,
-      showVotes: false
+      showVotes: false,
+      showRole: false,
     };
     this.state.socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); this.state.socket.emit('updateUsername', ({username: this.props.username, playerID: this.state.playerID})); });  
     this.state.socket.on('setPicker', (pickerObj) => { this.setState({ picker: pickerObj.picker }); });
@@ -37,11 +39,18 @@ class Game extends React.Component {
     this.state.socket.on('showVotes', (bool) => { this.setState({showVotes: bool}); console.log('show votes', bool); });
     this.state.socket.on('groupVoteBtns', ()=>{ this.setState({groupVotePassBtn: false, groupVoteFailBtn: false}); });
     
-    
     this.roundVote = this.roundVote.bind(this);
     this.isPicker = this.isPicker.bind(this);
     this.sendConfirmation = this.sendConfirmation.bind(this);
+    this.tempShowRole = this.tempShowRole.bind(this);
   }
+  
+  tempShowRole() {
+    if (this.state.resultsArray.length >= MIN_PLAYERS) {
+      this.setState({showRole: true}, () => setTimeout(() => this.setState({showRole: false}), 2000));
+    }
+  }
+
   roundVote(voteObj) {
     console.log('in the roundVote on client', voteObj.user + ' ' + voteObj.vote);
     this.setState({
@@ -64,11 +73,11 @@ class Game extends React.Component {
     }
   }
 
-  scoreColor(sucess) {
-    if (sucess === true) {
+  scoreColor(success) {
+    if (success === true) {
       return '#7ED321';
     }
-    if (sucess === false) {
+    if (success === false) {
       return '#D0011B';
     }
     return 'white';
@@ -97,6 +106,7 @@ class Game extends React.Component {
           })}
         </div>
       );
+      // showRole will be true for 20 seconds, show assign role for that amount of time.
     } else {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -129,7 +139,6 @@ class Game extends React.Component {
           {this.state.voteBoxes ? <div style={{ flex: 1, display: 'flex', flexDirection: 'row', alignSelf: 'center', justifyContent: 'center' }}>
             <div style={{ backgroundColor: this.state.groupVotePassBtn ? '#8CE037' : 'white', border: ' 2px solid #8CE037', margin: 8, padding: 16, borderRadius: '3px', color: this.state.groupVotePassBtn ? 'white' : '#8CE037', fontSize: '18px' }} onClick={() => { this.roundVote({ user: this.state.playerID, vote: true }); this.setState({groupVoteFailBtn: false, groupVotePassBtn: true}); }}>PASS</div>
             <div style={{ backgroundColor: this.state.groupVoteFailBtn ? '#D0011B' : 'white', border: ' 2px solid #D0011B', margin: 8, padding: 16, borderRadius: '3px', color: this.state.groupVoteFailBtn ? 'white' : '#D0011B', fontSize: '18px' }} onClick={() => { this.roundVote({ user: this.state.playerID, vote: false }); this.setState({groupVoteFailBtn: true, groupVotePassBtn: false}); }}>FAIL</div>
-
           </div>
             : <p></p>}
 
@@ -177,7 +186,7 @@ class Game extends React.Component {
 
         </div >
       );
-    }
+    }      
   }
 }
 
