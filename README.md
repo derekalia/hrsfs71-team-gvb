@@ -10,7 +10,7 @@ Players are either Good or Bad. For three to five rounds, they must depend on ea
 
 ## Team
 
-  - __Product Owner__:Linsay Anchors
+  - __Product Owner__: Lindsay Anchors
   - __Scrum Master__: Aidan Bane
   - __Development Team Members__: Wilton Chew, Derek Alia
 
@@ -31,8 +31,8 @@ Players are either Good or Bad. For three to five rounds, they must depend on ea
 ## Requirements
 
 - Node 0.10.x
-- Redis 2.6.x
-- Postgresql 9.1.x
+- NPM
+- MongoDB
 - Axios: 0.15.3
 - Body-parser: ^1.17.1,
 - Express: ^4.15.2
@@ -49,20 +49,29 @@ Players are either Good or Bad. For three to five rounds, they must depend on ea
 
 ### Installing Dependencies
 
-From within the root directory:
+Open the root directory in three terminal windows.
+
+*1st Terminal Window*
+
+```sh
+mongod
+```
+*2st Terminal Window*
 
 ```
 npm install
 npm run build
-npm start
 
+*3st Terminal Window*
+
+```sh
+npm start-server
 ```
-
-### Roadmap
-
-View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
-
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+
+### Roadmap
+
+See wireframes directory and Github issues.
