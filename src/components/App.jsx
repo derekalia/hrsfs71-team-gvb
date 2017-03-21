@@ -14,11 +14,12 @@ class App extends React.Component {
     super(props);
     this.state = {
       user: {
-        loggedin: false,
+        loggedin: true,
         username: 'Bob'
-      }
+      },
+      userArray: ''
     };
-    socket.on('updateArray', (array) => { this.setState({ resultsArray: array }); console.log('Array Updated To:', this.state.resultsArray); });
+    socket.on('updateArray', (array) => { this.setState({ userArray: array }); console.log('Array Updated To:', this.state.userArray); });
     this.login = this.login.bind(this);
     this.logOut = this.logOut.bind(this);
   }
@@ -61,7 +62,7 @@ class App extends React.Component {
             return this.state.user.loggedin ? <Redirect to='/home' /> : <Redirect to='/login' />;
           }}/>
           <Route path='/home' render={() => {
-            return <Home socket={socket} username={this.state.user.username}/>;
+            return <Home socket={socket} props={this.state} username={this.state.user.username}/>;
           }}/>
           <Route path='/login' render={() => <Login login={this.login}/>} />
           <Route path='/signup' component={Signup}/>

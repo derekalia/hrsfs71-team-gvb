@@ -10,9 +10,9 @@ class Game extends React.Component {
     super(props);
     this.state = {
       socket: this.props.socket,
-      resultsArray: [],
+      resultsArray: this.props.userArray,
       questArray: [],
-      playerID: '',
+      playerID: props.playerID,
       username: this.props.username,
       picker: '',
       voteBoxes: false,
@@ -25,7 +25,7 @@ class Game extends React.Component {
       showVotes: false,
       showRole: false,
     };
-    this.state.socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); });  
+    this.props.socket.on('updateArray', (userArray) => { this.setState({ resultsArray: userArray }); console.log('ready to start!'); });
     this.state.socket.on('setPicker', (pickerObj) => { this.setState({ picker: pickerObj.picker }); });
     this.state.socket.on('updateQuest', (quests) => { this.setState({ questArray: quests }); });
     this.state.socket.on('confirmGroupBtn', (bool) => { this.setState({ confirmGroupBtn: bool }); });
@@ -95,6 +95,9 @@ class Game extends React.Component {
   }
 
   render() {
+    console.log('this is the playerID', this.state.playerID);
+    console.log('this is the userArray', this.props.userArray);
+    
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
 
