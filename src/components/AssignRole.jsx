@@ -13,15 +13,13 @@ class AssignRole extends React.Component {
     this.state = {
       showRole: true,
       // allUsers: props.userArray,
-      role: props.roleObj,
+      roleImg: (props.roleObj.isBad) ? BAD_IMG : GOOD_IMG,
       // isBad: false,
-      // otherBads: []
+      bads: (props.roleObj.isBad) ? props.roleObj.bads : []
     };
-
 
     this.hideRole = this.hideRole.bind(this);
     this.tempImg = this.tempImg.bind(this);
-    this.determineRole = this.determineRole.bind(this);
   }
   
   hideRole() {
@@ -29,24 +27,19 @@ class AssignRole extends React.Component {
   }
 
   tempImg() {
-    return this.state.showRole ? <img src={GOOD_IMG}/> : <div><div>Time's up. Remember your role</div><Link to='/game'/></div>;
-  }
-
-  determineRole() {
-    console.log('ResultsArray handed to AssignRolecomponent: ', this.allUsers);
-    // console.log('Username handed to AssignRolecomponent: ', this.state.thisUser);
-    // loop through allUsers until finding thisUser
-      // if a user isBad and is NOT thisUser, push that user to otherBads results
-      // if user isBad and IS thisUser, set isBad to true
-      // if user is not bad and IS thisUser, break from the loop
+    return this.state.showRole ? 
+      <img src={this.state.roleImg}/> : 
+      <div>
+        <div>Time's up. Remember your role</div>
+        <Link to='/game'>Start Game</Link>
+      </div>;
   }
 
   render () {
-    console.log('role in assign role', this.state.role);
+    // console.log('role in assign role', this.state.role);
     return (
       <div>
         <div>
-          {this.determineRole()}
           <Timer seconds={10}
             color="#000"
             alpha={0.9}

@@ -25,7 +25,7 @@ class Game extends React.Component {
       showVotes: false,
       showRole: false,
     };
-    this.state.socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); this.state.socket.emit('updateUsername', ({username: this.props.username, playerID: this.state.playerID})); });  
+    this.state.socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); });  
     this.state.socket.on('setPicker', (pickerObj) => { this.setState({ picker: pickerObj.picker }); });
     this.state.socket.on('updateQuest', (quests) => { this.setState({ questArray: quests }); });
     this.state.socket.on('confirmGroupBtn', (bool) => { this.setState({ confirmGroupBtn: bool }); });
@@ -95,7 +95,7 @@ class Game extends React.Component {
   }
 
   render() {
-    if (this.state.resultsArray.length < MIN_PLAYERS) {
+    /*if (this.state.resultsArray.length < MIN_PLAYERS) {
       // render waiting area (aka game lobby)
       return (
         <div className='playerList'>
@@ -105,10 +105,10 @@ class Game extends React.Component {
             return <Player selected={player.selected} isPicker={this.isPicker} roundVote={this.roundVote} showVote={player.vote} handleCheck={this.handleCheck} key={player.key} userID={player.userID} pickerID={this.state.picker} />;
           })}
         </div>
-      );
+      );*/
       // showRole will be true for 20 seconds, show assign role for that amount of time.
-    } else {
-      return (
+    // } else {
+    return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
 
           <div style={{ flex: 1, alignSelf: 'center' }}>
@@ -185,9 +185,9 @@ class Game extends React.Component {
           </div>
 
         </div >
-      );
-    }      
+    );
+  }      
   }
-}
+
 
 export default Game;
