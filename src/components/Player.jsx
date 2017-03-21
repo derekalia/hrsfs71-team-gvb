@@ -6,7 +6,7 @@ class Player extends React.Component {
   }
 
   render() {    
-    console.log('these are the props!', this.props);
+    // console.log('these are the props!', this.props);
     return (       
       <div style={{ display: 'flex', flexDirection: 'row' }}>         
         { this.props.showVotes ? <div style={{ display: 'flex', alignSelf: 'center', alignContent: 'center', alignItems: 'center', flex: 1, border: '2px solid transparent', borderRadius: 4, padding: 6, margin: 6, backgroundColor: this.props.roundVote ? 'green' : 'red' }}>

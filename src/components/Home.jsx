@@ -8,10 +8,11 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userArray: [],
+      userArray: this.props.userArray,
       showRole: false,
       role: false,
-      showGame: false
+      showGame: false,
+      playerID: ''
     };
     // this.props.socket.on('updateArray', (array) => { this.setState({ userArray: array }); console.log('Array Updated To:', this.state.userArray); });
     this.props.socket.on('updateArray', (userArray) => { 
@@ -24,6 +25,9 @@ class Home extends React.Component {
       this.setState({showRole: true});
 
     });
+    this.props.socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); console.log('yo dawg', this.state.playerID); });  
+
+
     this.joinGame = this.joinGame.bind(this);
 
   }
@@ -34,10 +38,11 @@ class Home extends React.Component {
   }
 
   showCard() {
-    return ( <AssignRole userArray={this.state.userArray} roleObj={this.state.role} /> ); 
+    return ( <AssignRole props={this.state} /> ); 
   }
 
   render() {
+    console.log('im at home!!!', this.state.playerID);
     return (
       
       <div>
@@ -46,9 +51,9 @@ class Home extends React.Component {
             color="#000"
             alpha={0.9}
             size={40}
-            onComplete={()=>{ this.setState({showGame: true}); }} /></div> : <div><button onClick={this.joinGame}>Join Game</button></div> }        
+            onComplete={()=>{ this.setState({showGame: true, showRole: false}); }} /></div> : <div><button onClick={this.joinGame}>Join Game</button></div> }        
          
-         {this.state.showGame ? <Game socket={this.props.socket} username={this.props.username} /> : <div></div>}
+         {this.state.showGame ? <Game socket={this.props.socket} playerID={this.state.playerID} userArray={this.state.userArray} /> : <div></div>}
          
          
       </div>
