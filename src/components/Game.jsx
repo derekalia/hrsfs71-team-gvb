@@ -25,7 +25,7 @@ class Game extends React.Component {
       showVotes: false,
       showRole: false,
     };
-    this.state.socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); this.state.socket.emit('updateUsername', ({username: this.props.username, playerID: this.state.playerID})); });  
+    this.state.socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); });  
     this.state.socket.on('setPicker', (pickerObj) => { this.setState({ picker: pickerObj.picker }); });
     this.state.socket.on('updateQuest', (quests) => { this.setState({ questArray: quests }); });
     this.state.socket.on('confirmGroupBtn', (bool) => { this.setState({ confirmGroupBtn: bool }); });
@@ -95,7 +95,6 @@ class Game extends React.Component {
   }
 
   render() {
-   
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
 
@@ -174,8 +173,8 @@ class Game extends React.Component {
 
         </div >
     );
-         
-  }
+  }      
 }
+
 
 export default Game;
