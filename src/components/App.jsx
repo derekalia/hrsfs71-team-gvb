@@ -18,6 +18,7 @@ class App extends React.Component {
         username: 'Bob'
       }
     };
+    socket.on('updateArray', (array) => { this.setState({ resultsArray: array }); console.log('Array Updated To:', this.state.resultsArray); });
     this.login = this.login.bind(this);
     this.logOut = this.logOut.bind(this);
   }
@@ -29,6 +30,7 @@ class App extends React.Component {
         username: userName
       }
     });
+    socket.emit('updateUsername', userName);
   }
 
   logOut() {
@@ -65,7 +67,7 @@ class App extends React.Component {
           <Route path='/signup' component={Signup}/>
           <Route path='/creategame' render={() => <CreateGame user={this.state.user}/>} />
           <Route path='/game' render={() => {
-            return (this.state.user.loggedin) ? <Game username={this.state.user.username} /> : <Redirect to='/login'/>;
+            return (this.state.user.loggedin) ? <Game username={this.state.user.username} socket={socket} /> : <Redirect to='/login'/>;
           }}/>
           <Route path='/game/vote' render={() => <Vote user={this.state.user.username}/>}/>          
         {/*<Game socket={socket} username={this.state.user.username}/>*/}

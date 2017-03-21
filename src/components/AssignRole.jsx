@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Link } from 'react-router-dom';
 import Timer from 'react-countdown-clock';
 // https://github.com/pughpugh/react-countdown-clock
 
@@ -10,12 +11,13 @@ class AssignRole extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // showRole: true,
+      showRole: true,
       // allUsers: props.userArray,
       role: props.roleObj,
       // isBad: false,
       // otherBads: []
     };
+
 
     this.hideRole = this.hideRole.bind(this);
     this.tempImg = this.tempImg.bind(this);
@@ -27,7 +29,7 @@ class AssignRole extends React.Component {
   }
 
   tempImg() {
-    return this.state.showRole ? <img src={GOOD_IMG}/> : <div>Time's up. Remember your role</div>;
+    return this.state.showRole ? <img src={GOOD_IMG}/> : <div><div>Time's up. Remember your role</div><Link to='/game'/></div>;
   }
 
   determineRole() {

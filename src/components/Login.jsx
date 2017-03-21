@@ -36,14 +36,14 @@ class Login extends React.Component {
         });
         this.props.login(this.state.user.username);
       }
-    })
-    .catch(function (error) {
-      localThis.setState({
-        validationMsg: 'Login failed. Please try again.',
-        validationClass: 'errorMsg'
-      });
-      console.log(error);
     });
+    // .catch(function (error) {
+    //   localThis.setState({
+    //     validationMsg: 'Login failed. Please try again.',
+    //     validationClass: 'errorMsg'
+    //   });
+    //   console.log(error);
+    // });
   }
 
   render () {
