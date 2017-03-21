@@ -12,8 +12,8 @@ class Game extends React.Component {
       socket: this.props.socket,
       resultsArray: this.props.userArray,
       questArray: [],
-      playerID: props.playerID,
-      username: this.props.username,
+      playerID: this.props.playerID,
+      username: this.props.name,
       picker: '',
       voteBoxes: false,
       confirmGroupBtn: false,
@@ -23,10 +23,10 @@ class Game extends React.Component {
       groupVotePassBtn: false,
       groupVoteFailBtn: false,
       showVotes: false,
-      showRole: false,
+      showRole: false,      
     };
     this.props.socket.on('updateArray', (userArray) => { this.setState({ resultsArray: userArray }); console.log('ready to start!'); });
-    this.state.socket.on('setPicker', (pickerObj) => { this.setState({ picker: pickerObj.picker }); });
+    this.state.socket.on('setPicker', (pickerObj) => { this.setState({ picker: pickerObj.picker }); console.log('this is the picker', this.state.picker, pickerObj); });
     this.state.socket.on('updateQuest', (quests) => { this.setState({ questArray: quests }); });
     this.state.socket.on('confirmGroupBtn', (bool) => { this.setState({ confirmGroupBtn: bool }); });
     this.state.socket.on('updateCoinCounter', (coin) => { this.setState({ coinCounter: coin }); console.log('coin state ', this.state.coinCounter); });
@@ -64,6 +64,8 @@ class Game extends React.Component {
   }
 
   isPicker(picked) {
+    console.log('playerID', this.state.playerID);
+    console.log('picker', this.state.picker);
     console.log('authorized to select? ', this.state.playerID === this.state.picker);
     if (this.state.playerID === this.state.picker) {
       console.log('picker', this.state.picker);
@@ -95,8 +97,8 @@ class Game extends React.Component {
   }
 
   render() {
-    console.log('this is the playerID', this.state.playerID);
-    console.log('this is the userArray', this.props.userArray);
+    console.log('this is the username', this.state);
+    console.log('this is the userArray', this.props);
     
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -106,7 +108,7 @@ class Game extends React.Component {
           </div>
 
           <div style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}>
-            <p style={{ textAlign: 'center' }}><b>{this.state.playerID}</b></p>
+            <p style={{ textAlign: 'center' }}><b>{this.state.username}</b></p>
           </div>
 
           <div style={{ flex: 1, textAlign: 'center', alignSelf: 'center' }}>
@@ -134,7 +136,7 @@ class Game extends React.Component {
 
           <div style={{ flex: 1, alignSelf: 'center' }}>
             {this.state.resultsArray.map((userInput) => {
-              return <Player selected={userInput.selected} isPicker={this.isPicker} roundVote={userInput.roundVote} showVotes={this.state.showVotes} key={userInput.key} username={userInput.name} userID={userInput.userID} pickerID={this.state.picker} />;
+              return <Player selected={userInput.selected} isPicker={this.isPicker} roundVote={userInput.roundVote} showVotes={this.state.showVotes} key={userInput.key} name={userInput.name} userID={userInput.userID} pickerID={this.state.picker} />;
             }
             )}
 

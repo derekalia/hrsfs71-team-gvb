@@ -77,7 +77,7 @@ module.exports = function (app, express, server) {
         }
       }
       );
-      updateClientArray();
+      // updateClientArray();
       // console.log(userArray);
     });
 
@@ -139,11 +139,12 @@ module.exports = function (app, express, server) {
     let setCoin = () => {
       let pickedUser = coinCounter % userArray.length;
       userArray[pickedUser].picker = true;
+      console.log('picker ', userArray[pickedUser].userID);
       io.emit('setPicker', ({ picker: userArray[pickedUser].userID }));
       coinCounter++;
       io.emit('updateCoinCounter', coinCounter);
       io.emit('updateQuest', quest);
-      io.emit('topMessage', userArray[pickedUser].userID + ' is picking ' + quest[questCounter].numberOfPlayers + ' players to go on the mission');
+      io.emit('topMessage', userArray[pickedUser].name + ' is picking ' + quest[questCounter].numberOfPlayers + ' players to go on the mission');
     };
 
     //picker selects which user to add to the group
@@ -178,7 +179,7 @@ module.exports = function (app, express, server) {
       let playerList = '';
       userArray.forEach((player) => {
         if (player.selected === true) {
-          playerList += player.userID + ' ';
+          playerList += player.name + ' ';
         }
       });
       io.emit('midMessage', playerList);

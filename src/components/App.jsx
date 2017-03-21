@@ -17,9 +17,11 @@ class App extends React.Component {
         loggedin: true,
         username: 'Bob'
       },
-      userArray: ''
+      userArray: '',
+      playerID: ''
     };
     socket.on('updateArray', (array) => { this.setState({ userArray: array }); console.log('Array Updated To:', this.state.userArray); });
+    socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); console.log('yo dawg in app', this.state.playerID); });  
     this.login = this.login.bind(this);
     this.logOut = this.logOut.bind(this);
   }
@@ -62,14 +64,14 @@ class App extends React.Component {
             return this.state.user.loggedin ? <Redirect to='/home' /> : <Redirect to='/login' />;
           }}/>
           <Route path='/home' render={() => {
-            return <Home socket={socket} props={this.state} username={this.state.user.username}/>;
+            return <Home socket={socket} props={this.state}/>;
           }}/>
           <Route path='/login' render={() => <Login login={this.login}/>} />
           <Route path='/signup' component={Signup}/>
           <Route path='/creategame' render={() => <CreateGame user={this.state.user}/>} />
-          <Route path='/game' render={() => {
+          {/*<Route path='/game' render={() => {
             return (this.state.user.loggedin) ? <Game username={this.state.user.username} socket={socket} /> : <Redirect to='/login'/>;
-          }}/>
+          }}/>*/}
           <Route path='/game/vote' render={() => <Vote user={this.state.user.username}/>}/>          
         {/*<Game socket={socket} username={this.state.user.username}/>*/}
         </div>
