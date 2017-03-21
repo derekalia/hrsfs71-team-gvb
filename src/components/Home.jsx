@@ -10,8 +10,8 @@ class Home extends React.Component {
       showRole: false,
       role: false
     };
-    this.props.socket.on('updateArray', (array) => { this.setState({ userArray: array }); console.log('Array Updated To:', this.state.userArray); });
-    this.props.socket.on('readyToStart', (userArray) => { 
+    // this.props.socket.on('updateArray', (array) => { this.setState({ userArray: array }); console.log('Array Updated To:', this.state.userArray); });
+    this.props.socket.on('updateArray', (userArray) => { 
       this.setState({ userArray: userArray });
       console.log('ready to start!');
     });

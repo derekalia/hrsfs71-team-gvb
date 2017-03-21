@@ -69,11 +69,11 @@ module.exports = function (app, express, server) {
     socket.emit('setPlayerID', socket.client.id);
 
     //setUsername
-    socket.on('updateUsername', (userObj) => {
-      console.log('helllooo there!!!', userObj);
+    socket.on('updateUsername', (username) => {
+      console.log('helllooo there!!!', username);
       userArray.forEach((player) => {
-        if (player.userID === userObj.playerID) {
-          player.name = userObj.username;
+        if (player.userID === socket.client.id) {
+          player.name = username;
         }
       }
       );
@@ -99,7 +99,6 @@ module.exports = function (app, express, server) {
           assignRoles();
         }
       });
-      updateClientArray();
     });
 
     let assignRoles = () => {
@@ -117,7 +116,7 @@ module.exports = function (app, express, server) {
         io.to(player.userID).emit('role', {isBad: player.isBad, bads: bads});
       });
 
-      io.emit('readyToStart', userArray);
+      updateClientArray();
     };
 
     //getPlayerAmount
