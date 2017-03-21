@@ -70,7 +70,7 @@ class App extends React.Component {
             return (this.state.user.loggedin) ? <Game username={this.state.user.username} socket={socket} /> : <Redirect to='/login'/>;
           }}/>
           <Route path='/game/vote' render={() => <Vote user={this.state.user.username}/>}/>          
-        {/*<Game socket={socket} username={this.state.user.username}/>*/}
+        <Game socket={socket} username={this.state.user.username}/>
         </div>
         
       </Router>

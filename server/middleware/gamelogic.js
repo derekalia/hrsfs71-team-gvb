@@ -81,7 +81,7 @@ module.exports = function (app, express, server) {
       // console.log(userArray);
     });
 
-    let allJoined = () => {  
+    let allJoined = () => {
       for (let player of userArray) {
         if (!player.joinedGame) {
           return false;
@@ -111,9 +111,9 @@ module.exports = function (app, express, server) {
         }
       });
 
-      userArray.forEach((player) => {  
-        console.log('role sent to userID: ', player.userID + '' + {isBad: player.isBad, bads: bads}); 
-        io.to(player.userID).emit('role', {isBad: player.isBad, bads: bads});
+      userArray.forEach((player) => {
+        console.log('role sent to userID: ', player.userID + '' + { isBad: player.isBad, bads: bads });
+        io.to(player.userID).emit('role', { isBad: player.isBad, bads: bads });
       });
 
       updateClientArray();
@@ -126,9 +126,9 @@ module.exports = function (app, express, server) {
         cleanPlayers();
         io.emit('voteBoxes', false);
         io.emit('updateQuest', quest);
-        setCoin();  
-        setRoles(NUM_OF_BAD);      
-        updateClientArray();        
+        setCoin();
+        setRoles(NUM_OF_BAD);
+        updateClientArray();
         console.log('starting game');
       } else {
         console.log('not enought players yet!');
