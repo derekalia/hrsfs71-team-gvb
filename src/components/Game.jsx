@@ -95,20 +95,8 @@ class Game extends React.Component {
   }
 
   render() {
-    if (this.state.resultsArray.length < MIN_PLAYERS) {
-      // render waiting area (aka game lobby)
-      return (
-        <div className='playerList'>
-          <p>Hi, {this.state.username}!</p>
-          <div className='waitMsg'>Waiting for all players to join . . .</div>
-          {this.state.resultsArray.map((player, i) => {
-            return <Player selected={player.selected} isPicker={this.isPicker} roundVote={this.roundVote} showVote={player.vote} handleCheck={this.handleCheck} key={player.key} userID={player.userID} pickerID={this.state.picker} />;
-          })}
-        </div>
-      );
-      // showRole will be true for 20 seconds, show assign role for that amount of time.
-    } else {
-      return (
+   
+    return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
 
           <div style={{ flex: 1, alignSelf: 'center' }}>
@@ -185,8 +173,8 @@ class Game extends React.Component {
           </div>
 
         </div >
-      );
-    }      
+    );
+         
   }
 }
 

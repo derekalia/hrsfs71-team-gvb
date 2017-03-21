@@ -47,11 +47,11 @@ class AssignRole extends React.Component {
       <div>
         <div>
           {this.determineRole()}
-          <Timer seconds={10}
+          {/*<Timer seconds={10}
             color="#000"
             alpha={0.9}
             size={40}
-            onComplete={this.hideRole} />
+            onComplete={this.hideRole} />*/}
         </div>
         <div>{this.tempImg()}</div>
       </div>
