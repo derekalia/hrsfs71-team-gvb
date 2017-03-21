@@ -39,13 +39,6 @@ class AssignRole extends React.Component {
     // console.log('role in assign role', this.state.role);
     return (
       <div>
-        <div>
-          <Timer seconds={10}
-            color="#000"
-            alpha={0.9}
-            size={40}
-            onComplete={this.hideRole} />
-        </div>
         <div>{this.tempImg()}</div>
       </div>
     );
