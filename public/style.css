@@ -1,0 +1,37 @@
+body {
+  margin: 10px;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+}
+
+.App .header {
+  display: flex;
+  justify-content: center;
+}
+
+.App .nav {
+
+}
+
+.successMsg {
+  color: green;
+  font-size: small;
+}
+
+.errorMsg {
+  color: red;
+  font-size: small;
+}
+
+.waitMsg {
+  color: orange;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.playerList {
+  margin: 15px;
+}

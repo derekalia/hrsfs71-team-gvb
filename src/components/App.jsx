@@ -1,37 +1,84 @@
 import React from 'react';
-import { BrowserRouter as Router, Link, Route, Redirect } from 'react-router-dom';
+import { HashRouter as Router, Link, Route, Redirect } from 'react-router-dom';
 import Signup from './Signup.jsx';
 import Login from './Login.jsx';
 import Home from './Home.jsx';
-import GameLobby from './GameLobby.jsx';
 import CreateGame from './CreateGame.jsx';
-import JoinGame from './JoinGame.jsx';
-import Vote from './Vote.jsx';
+import Game from './Game.jsx';
+import SocketIOClient from 'socket.io-client';
 
-//hard coded until auth is implemented
-const loggedin = true;
-const username = 'player1';
+var socket = SocketIOClient('http://localhost:3000');
 
-const App = () => {
-  return (
-    <Router>
-      <div>
-        {/*<Route exact path='/' render={() => <Home /> } />*/}
-        <Route exact path='/' render={() => {
-          return loggedin ? <Redirect to='/home' /> : <Redirect to='/login' />;
-        }}/>
-        <Route path='/home' component={Home}/>
-        <Route path='/login' component={Login}/>
-        <Route path='/signup' component={Signup}/>
-        <Route path='/creategame' render={() => <CreateGame user={username}/>}/>
-        <Route path='/joingame' render={() => <JoinGame user={username}/>}/>
-        <Route path='/game/lobby' render={() => {
-          return (loggedin) ? <GameLobby user={username}/> : <Redirect to='/login'/>;
-        }}/>
-        <Route path='/game/vote' render={() => <Vote user={username}/>}/>
-      </div>
-    </Router>
-  );
-};
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: {
+        loggedin: true,
+        username: 'Bob'
+      },
+      userArray: '',
+      playerID: ''
+    };
+    socket.on('updateArray', (array) => { this.setState({ userArray: array }); console.log('Array Updated To:', this.state.userArray); });
+    socket.on('setPlayerID', (id) => { this.setState({ playerID: id }); console.log('yo dawg in app', this.state.playerID); });  
+    this.login = this.login.bind(this);
+    this.logOut = this.logOut.bind(this);
+  }
+
+  login(userName) {
+    this.setState({
+      user: {
+        loggedin: true,
+        username: userName
+      }
+    });
+    socket.emit('updateUsername', userName);
+  }
+
+  logOut() {
+    this.setState({
+      user: {
+        loggedin: false,
+        username: ''
+      }
+    });
+  }
+
+  render() {
+    return (
+      <Router>
+        <div className="App">
+          <div className="header"><header>Welcome to our game {this.state.user.username}!</header></div>
+          <div>
+            <div><Link to="/">Home</Link></div>
+            <div><Link to="/login">Login</Link></div>
+            <div><Link to="/signup">Signup</Link></div>
+            <div><button onClick={this.logOut}>Logout</button></div>
+          </div>
+
+          <hr/>
+
+          {/*<Route exact path='/' render={() => <Home /> } />*/}
+          <Route exact path='/' render={() => {
+            return this.state.user.loggedin ? <Redirect to='/home' /> : <Redirect to='/login' />;
+          }}/>
+          <Route path='/home' render={() => {
+            return <Home socket={socket} props={this.state}/>;
+          }}/>
+          <Route path='/login' render={() => <Login login={this.login}/>} />
+          <Route path='/signup' component={Signup}/>
+          <Route path='/creategame' render={() => <CreateGame user={this.state.user}/>} />
+          {/*<Route path='/game' render={() => {
+            return (this.state.user.loggedin) ? <Game username={this.state.user.username} socket={socket} /> : <Redirect to='/login'/>;
+          }}/>*/}
+          <Route path='/game/vote' render={() => <Vote user={this.state.user.username}/>}/>          
+        {/*<Game socket={socket} username={this.state.user.username}/>*/}
+        </div>
+        
+      </Router>
+    );
+  }
+}
 
 export default App;

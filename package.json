@@ -2,10 +2,11 @@
   "name": "gvb",
   "version": "1.0.0",
   "description": "Good must triumph. The missions must succeed. By completing missions, Good will become one step closer to success yet Bad has cursed some of the good, ready for sabotage. Good must unmask them in five missions. We are Good!",
-  "main": "index.js",
+  "main": "server/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack -d --watch"
+    "build": "webpack -d --watch",
+    "start": "nodemon server/server.js"
   },
   "repository": {
     "type": "git",
@@ -18,12 +19,14 @@
   },
   "homepage": "https://github.com/derekalia/hrsfs71-team-gvb#readme",
   "dependencies": {
+    "axios": "^0.15.3",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "mongoose": "^4.8.6",
     "morgan": "^1.8.1",
     "nodemon": "^1.11.0",
     "react": "^15.4.2",
+    "react-countdown-clock": "^1.1.0",
     "react-dom": "^15.4.2",
     "react-router-dom": "^4.0.0",
     "socket.io": "^1.7.3",

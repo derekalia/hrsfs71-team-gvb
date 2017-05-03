@@ -1,4 +1,4 @@
-# hrsfs71-team-gvb
+3 hrsfs71-team-gvb
 # GvB
 Good must triumph. The missions must succeed. By completing missions, Good will become one step closer to success yet Bad has cursed some of the good, ready for sabotage. Good must unmask them in five missions. We are Good!
 
@@ -10,7 +10,7 @@ Players are either Good or Bad. For three to five rounds, they must depend on ea
 
 ## Team
 
-  - __Product Owner__:Linsay Anchors
+  - __Product Owner__: Lindsay Anchors
   - __Scrum Master__: Aidan Bane
   - __Development Team Members__: Wilton Chew, Derek Alia
 
@@ -31,28 +31,48 @@ Players are either Good or Bad. For three to five rounds, they must depend on ea
 ## Requirements
 
 - Node 0.10.x
-- Redis 2.6.x
-- Postgresql 9.1.x
-- etc
-- etc
+- NPM
+- MongoDB
+- Axios: 0.15.3
+- Body-parser: ^1.17.1,
+- Express: ^4.15.2
+- Mongoose: ^4.8.6
+- Morgan: ^1.8.1
+- Nodemon: ^1.11.0
+- React: ^15.4.2
+- React-dom: ^15.4.2
+- React-router-dom: ^4.0.0
+- Socket.io: ^1.7.3
+- Socket.io-client: ^1.7.3
 
 ## Development
 
 ### Installing Dependencies
 
-From within the root directory:
+Open the root directory in three terminal windows.
+
+*1st Terminal Window*
 
 ```sh
-sudo npm install -g bower
-npm install
-bower install
+mongod
 ```
 
-### Roadmap
+*2st Terminal Window*
 
-View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
+```
+npm install
+npm run build
 
+*3st Terminal Window*
+
+```sh
+npm start
+```
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+
+### Roadmap
+
+See wireframes directory and Github issues.

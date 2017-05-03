@@ -2,6 +2,7 @@
 
 const express = require('express');
 const socket = require('socket.io');
+const NUM_OF_BAD = 2; // hardcoded for now
 
 module.exports = function (app, express, server) {
 
@@ -14,38 +15,38 @@ module.exports = function (app, express, server) {
   let quest = [
     {
       questNum: 1,
-      numberOfPlayer: 2,
+      numberOfPlayers: 2,
       success: null,
     },
     {
       questNum: 2,
-      numberOfPlayer: 3,
+      numberOfPlayers: 3,
       success: null,
     },
     {
       questNum: 3,
-      numberOfPlayer: 2,
+      numberOfPlayers: 2,
       success: null,
     },
     {
       questNum: 4,
-      numberOfPlayer: 3,
+      numberOfPlayers: 3,
       success: null,
     },
     {
       questNum: 5,
-      numberOfPlayer: 3,
+      numberOfPlayers: 3,
       success: null,
     },
 
   ];
 
-
   let scoreCounter = 0;
   let roundCounter = 0;
-  let questCounter = 0;
+  let missionCounter = 0;
   let coinCounter = 0;
   let selectCounter = 0;
+  let questCounter = 0;
 
   io.on('connection', (socket) => {
     console.log('a user connected');
@@ -55,23 +56,80 @@ module.exports = function (app, express, server) {
       roundVote: null,
       missionVote: null,
       picker: false,
+      isBad: false,
       selected: false,
       avatar: null,
       userID: socket.client.id,
-      vote: false,
-      key: socket.client.id
+      inMission: false,
+      key: socket.client.id,
+      joinedGame: false
     });
 
     //send each client an id
     socket.emit('setPlayerID', socket.client.id);
 
+    //setUsername
+    socket.on('updateUsername', (username) => {
+      console.log('helllooo there!!!', username);
+      userArray.forEach((player) => {
+        if (player.userID === socket.client.id) {
+          player.name = username;
+        }
+      }
+      );
+      // updateClientArray();
+      // console.log(userArray);
+    });
+
+    let allJoined = () => {
+      for (let player of userArray) {
+        if (!player.joinedGame) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    socket.on('joinedGame', () => {
+      userArray.forEach((player) => {
+        if (player.userID === socket.id) {
+          player.joinedGame = true;
+        }
+        if (allJoined()) {
+          assignRoles();
+        }
+      });
+    });
+
+    let assignRoles = () => {
+      setRoles(2);
+      // create array of bads (TODO: use reduce)
+      let bads = [];
+      userArray.forEach((player) => {
+        if (player.isBad) {
+          bads.push(player);
+        }
+      });
+
+      userArray.forEach((player) => {
+        console.log('role sent to userID: ', player.userID + '' + { isBad: player.isBad, bads: bads });
+        io.to(player.userID).emit('role', { isBad: player.isBad, bads: bads });
+      });
+
+      updateClientArray();
+    };
+
     //getPlayerAmount
     socket.on('gameStart', () => {
       //if there are 5 players invoke setCoin
       if (userArray.length === 5) {
-        console.log('starting game');
+        cleanPlayers();
+        io.emit('voteBoxes', false);
+        io.emit('updateQuest', quest);
         setCoin();
+        setRoles(NUM_OF_BAD);
         updateClientArray();
+        console.log('starting game');
       } else {
         console.log('not enought players yet!');
       }
@@ -81,32 +139,57 @@ module.exports = function (app, express, server) {
     let setCoin = () => {
       let pickedUser = coinCounter % userArray.length;
       userArray[pickedUser].picker = true;
-      io.emit('setPicker', ({ picker: userArray[pickedUser].userID}));
-      coinCounter++;         
+      console.log('picker ', userArray[pickedUser].userID);
+      io.emit('setPicker', ({ picker: userArray[pickedUser].userID }));
+      coinCounter++;
+      io.emit('updateCoinCounter', coinCounter);
+      io.emit('updateQuest', quest);
+      io.emit('topMessage', userArray[pickedUser].name + ' is picking ' + quest[questCounter].numberOfPlayers + ' players to go on the mission');
     };
 
     //picker selects which user to add to the group
     socket.on('selectUser', (picked) => {
-      console.log('in selectUser');
-      userArray.forEach((el) => {
-        if (el.userID === picked) {
-          if (selectCounter < 3) {
-            if (el.selected === false) {
-              selectCounter++;
-              el.selected = true;
-            } else {
-              selectCounter--;
-              el.selected = false;
-            }
-            updateClientArray();
-            if (selectCounter === 3) {
-              startGroupVote();
-            }
+
+      userArray.forEach((player) => {
+        if (player.userID === picked) {
+
+          if (player.selected === false) {
+            selectCounter++;
+            player.selected = true;
           } else {
-            io.emit('error', 'you selected too many! Deselect one');
+            selectCounter--;
+            player.selected = false;
+          }
+          updateClientArray();
+
+          displaySelected();
+
+          if (selectCounter === quest[questCounter].numberOfPlayers) {
+            //send confirm button
+            socket.emit('confirmGroupBtn', true);
+          } else {
+            socket.emit('confirmGroupBtn', false);
           }
         }
       });
+
+    });
+
+    let displaySelected = () => {
+      let playerList = '';
+      userArray.forEach((player) => {
+        if (player.selected === true) {
+          playerList += player.name + ' ';
+        }
+      });
+      io.emit('midMessage', playerList);
+    };
+
+    socket.on('groupConfirmed', () => {
+      console.log('in groupConfirmed');
+      socket.emit('confirmGroupBtn', false);
+      io.emit('setPicker', '');
+      startGroupVote();
     });
 
     let updateClientArray = () => {
@@ -116,59 +199,120 @@ module.exports = function (app, express, server) {
     //resets each players roundVote missionVote picker selected 
     let cleanPlayers = () => {
       console.log('scrub that dirty player down');
-      userArray.forEach((el, i) => {
-        el.missionVote = null;
-        el.roundVote = null;
-        el.picker = false;
-        el.selected = false;
+      userArray.forEach((player) => {
+        player.missionVote = null;
+        player.roundVote = null;
+        player.picker = false;
+        player.selected = false;
+        player.inMission = false;
       });
       console.log('all cleaned');
     };
 
+    let setRoles = (numOfBads) => {
+      // create array of numOfBad random numbers between 1 and 5, inclusive
+      let badIndices = [1, 3]; //hardcoded for now
+      badIndices.forEach((i) => {
+        userArray[i].isBad = true;
+      });
+    };
+
     let addToCounter = function () {
-      console.log('add to counter ', roundCounter);
       roundCounter += 1;
-      if (roundCounter === userArray.length) {
-        console.log('all are counted');
-        countMajorityVote();
-      }
+      console.log('Added to roundCounter ', roundCounter);
+    };
+
+    let addToMission = function () {
+      missionCounter += 1;
+      console.log('Added to missionCounter ', missionCounter);
+
     };
 
     let startGroupVote = () => {
-      console.log('Start Voting Now:');
+      console.log('Start voting now....');
       //send that user vote box component      
       io.emit('voteBoxes', true);
     };
 
     //sets player vote to pass or fail
     socket.on('roundVote', (voteObj) => {
-      // console.log('in the roundVote on server', voteObj.user + ' ' + voteObj.vote);
-      console.log(voteObj);
+      userArray.forEach((player) => {
+        if (player.userID === voteObj.user) {
 
-      userArray.forEach((el, i) => {
-        if (el.userID === voteObj.user) {
-          console.log(el.userID + ' ' + el.roundVote);
-          //keeps track of how many players have voted
-          if (el.roundVote === null) {
-            addToCounter();
-          }
-          if (voteObj.vote === true) {
-            // console.log('we got here insite the vote change');
-            el.roundVote = true;
-            // console.log('after the change', userArray);
+          //if on mission vote
+          if (player.inMission === true) {
+            if (player.missionVote === null) {
+              addToMission();
+            }
+            if (voteObj.vote === true) {
+              player.missionVote = true;
+            } else {
+              player.missionVote = false;
+            }
+            updateClientArray();
+            if (missionCounter === quest[questCounter].numberOfPlayers) {
+              console.log('all are counted');
+              countMissionVotes();
+            }
+
           } else {
-            el.roundVote = false;
-          }
 
-          updateClientArray();   
+            //keeps track of how many players have voted
+            if (player.roundVote === null) {
+              addToCounter();
+            }
+            if (voteObj.vote === true) {
+              // console.log('we got here insite the vote change');
+              player.roundVote = true;
+              // console.log('after the change', userArray);
+            } else {
+              player.roundVote = false;
+            }
+
+            updateClientArray();
+
+            if (roundCounter === userArray.length) {
+              console.log('all are counted');
+              io.emit('resetroundVoteBtn');
+              countMajorityVote();
+            }
+          }
         }
+
       });
     });
 
     //send all to users // try using for: 'everyone'
     updateClientArray();
 
-    //counts all votes and finds majority
+    //counts all mission votes and finds majority
+    let countMissionVotes = () => {
+      console.log('inside countMissionVotes func!');
+      var trueCount = 0;
+      var falseCount = 0;
+      userArray.forEach(player => {
+        if (player.missionVote === true) {
+          trueCount++;
+        } else if (player.missionVote === false) {
+          falseCount++;
+        }
+      });
+      if (falseCount > 0) {
+        console.log('the mission failed!');
+        quest[questCounter].success = false;
+        groupVoteFailed();
+        missionVoteFail();
+
+      } else {
+        console.log('the mission succeeded!');
+        quest[questCounter].success = true;
+        missionVoteSuccess();
+      }
+      //you should call this something else
+      questCounter++;
+    };
+
+    //counts all round votes and finds majority
     let countMajorityVote = () => {
       console.log('we got inside the countMajorityVote func!');
       var trueCount = 0;
@@ -176,30 +320,113 @@ module.exports = function (app, express, server) {
       for (var i = 0; i < userArray.length; i++) {
         if (userArray[i].roundVote === true) {
           trueCount++;
-        } else {
+        } else if (userArray[i].roundVote === false) {
           falseCount++;
         }
       }
+
+      //show who voted what
+      updateClientArray();
+      io.emit('showVotes', true);
+
+      console.log('false ' + falseCount + ', true ' + trueCount);
+      console.log(trueCount > falseCount ? 'vote passes' : 'vote fails');
+
       //if group vote fails
       if (falseCount > trueCount) {
         groupVoteFailed();
       } else {
-        //enter the win ring
+        groupVoteSucceeded();
       }
-      console.log('false ' + falseCount + ', true ' + trueCount);
-      console.log(trueCount > falseCount ? 'vote passes' : 'vote fails');    
     };
 
-    let groupVoteFailed = () => {
-      //we want to clean the players
-      cleanPlayers();      
+    let groupVoteSucceeded = () => {
+      io.emit('voteBoxes', false);
+      updateClientArray();
+      io.emit('topMessage', 'Vote Success');
+      io.emit('midMessage', '');
+      setTimeout(() => {
+        io.emit('groupVoteBtns');
+        missionVote();
+        io.emit('showVotes', false);
+        io.emit('topMessage', 'This group is going on a mission...waiting for results');
+      }, 8000);
+
+    };
+
+
+    let missionVoteFail = () => {
       io.emit('setPicker', '');
       io.emit('voteBoxes', false);
       selectCounter = 0;
       roundCounter = 0;
-      cleanPlayers();         
-      setCoin(); 
-           
+      missionCounter = 0;
+
+      io.emit('topMessage', 'Mission Failed!');
+      io.emit('midMessage', '');
+      updateClientArray();
+
+      setTimeout(() => {
+        cleanPlayers();
+        io.emit('groupVoteBtns');
+        setCoin();
+        io.emit('showVotes', false);
+        updateClientArray();
+      }, 8000);
+
+    };
+
+    let missionVoteSuccess = () => {
+      io.emit('setPicker', '');
+      io.emit('voteBoxes', false);
+      selectCounter = 0;
+      roundCounter = 0;
+      missionCounter = 0;
+
+      io.emit('topMessage', 'Mission Success!');
+      io.emit('midMessage', '');
+
+      updateClientArray();
+
+      setTimeout(() => {
+        cleanPlayers();
+        io.emit('groupVoteBtns');
+        setCoin();
+        io.emit('showVotes', false);
+        updateClientArray();
+      }, 8000);
+    };
+
+    let groupVoteFailed = () => {
+      io.emit('setPicker', '');
+      io.emit('voteBoxes', false);
+      selectCounter = 0;
+      roundCounter = 0;
+      missionCounter = 0;
+
+      io.emit('topMessage', 'Vote Failed');
+      io.emit('midMessage', '');
+      updateClientArray();
+
+      setTimeout(() => {
+        cleanPlayers();
+        io.emit('groupVoteBtns');
+        setCoin();
+        io.emit('showVotes', false);
+        updateClientArray();
+      }, 8000);
+
+    };
+
+    let missionVote = () => {
+      //get the players that are selected
+      userArray.forEach((player) => {
+        if (player.selected) {
+          player.inMission = true;
+          io.to(player.userID).emit('voteBoxes', true);
+        }
+      });
+      updateClientArray();
     };
 
     //on leaving
